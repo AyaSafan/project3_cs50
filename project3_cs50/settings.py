@@ -31,7 +31,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'm(@6qm)k@1br2&3p)p-^5$)xums3vpw@*wg$ly6@zijwf*f_v8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['pinocchiocs50.herokuapp.com','127.0.0.1','*']
 
