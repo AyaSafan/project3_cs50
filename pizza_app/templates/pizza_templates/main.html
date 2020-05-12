@@ -1,0 +1,30 @@
+{% extends "pizza_templates/index.html" %}
+{% block title %}Welcome{% endblock %}
+
+
+{% block nav_right %}
+{% if user.is_superuser %}
+<li class="nav-item"><a class="nav-link" href="{% url 'allorders' %}"><i class="fa fa-bars" aria-hidden="true"></i> ORDERS</a></li> 
+{%else%}
+
+<li class="nav-item"><a class="nav-link" href="{% url 'myorders' %}"><i class="fa fa-bars" aria-hidden="true"></i> ORDERS</a></li> 
+<li class="nav-item"><a class="nav-link" href="{% url 'cart' %}"><i class="fa">&#xf07a;</i> CART</a></li> 
+{% endif %}
+<li class="nav-item">
+    <div class="dropdown">
+        <button class="btn btn-custome btn-user dropdown-toggle" type="button" data-toggle="dropdown">
+            <i class="fa">&#xf007;</i> {{ user.username }} </button>
+        
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'logout' %}">LOG OUT</a>
+            {% if not user.is_superuser %}
+            <a class="dropdown-item" onclick="edit_modal();" >EDIT INFO</a>
+            {% endif %}
+        </div>
+      </div>
+</li>
+{% endblock %}
+
+{% block welcome %}
+    <a href="{% url 'menu' %}"><button type="button" class="btn btn-primary btn-lg btn-custome">VIEW MENU</button></a>    
+{% endblock %}

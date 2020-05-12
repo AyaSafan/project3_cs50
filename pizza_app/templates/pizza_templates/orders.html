@@ -1,0 +1,33 @@
+{% extends "pizza_templates/cart.html" %}
+
+{% block recet %}
+<div class="table-responsive-md">
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">ORDER</th>
+        <th scope="col">NUM</th>
+        <th scope="col">TIME</th>
+        <th scope="col">STATUS</th>
+      </tr>
+    </thead>
+    <tbody>
+        {%for order in orders%}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td class="orders">{{order}}</td>
+        <td >{{order.id}}</td>
+        <td>{{order.date}}</td>
+        {% if order.done %}
+        <td><i class="fa fa-check-circle" aria-hidden="true"></i> Done</td>
+        {% else %}
+        <td><i class="fas fa-times-circle"></i> Not Done</td>
+        {%endif%}
+      </tr>
+      {%endfor%}
+    
+    </tbody>
+  </table>
+</div>
+{% endblock%}

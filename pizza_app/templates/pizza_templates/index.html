@@ -1,0 +1,157 @@
+{% extends "pizza_templates/base.html" %}
+{% load static %}
+
+{% block script %}
+<script src="{% static 'pizza_static/index.js' %}"></script>
+{% endblock %}
+
+
+
+{% block title %}Home{% endblock %}
+
+
+
+
+{% block body %}
+
+{% if messages %}
+      <div id="alert">
+          {% for message in messages %}
+          {{ message }}
+          {% endfor %}
+      </div>
+{% endif %}
+
+{% block container %}
+  <div class="background">
+  <div class="container card-container"> 
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-lg-6 col-md-8 col-sm-8">
+            <div class="card">
+                <center>
+                    <h1>Welcome to Pinnochio's Pizza & Subs</h1>
+                    <br>
+                      <p class="lead font-weight-normal">
+                        Thanks For Using Our Online Service!<br><br>
+                      </p> 
+                      <p id="online-intro" class="lead font-weight-normal">
+                        With your account you can:<br>
+                         - View All Menu Updates<br>
+                         - Place Your Order Online<br>
+                         - View Your Order Status<br>
+                         - Get Emails with your Orders Status<br><br>
+                        </p>  
+                        <p class="lead font-weight-normal"> 
+                         Made with Love from Pinnochio's pizza & subs!♡ <br>
+                      </p>
+                    {% block welcome %}
+                    <button type="button" class="btn btn-primary btn-lg btn-custome" data-toggle="modal" data-target="#log_in_modal">LOG IN</button>
+                       &nbsp; &nbsp;
+                    <button type="button" class="btn btn-primary btn-lg btn-custome "  data-toggle="modal" data-target="#sign_up_modal">SIGN UP</button>
+                    {% endblock %}
+
+                </center>
+
+            </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+<!------------------------------------------------Modal Sign Up--------------------------------------------------------------->
+
+<div class="modal fade" id="sign_up_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="exampleModalLabel">Sign Up</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form id ="sign_up_form" action="{% url 'signup' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label >Username:</label>
+                  <input class="form-control" id="sign_username" placeholder="Enter username ..." name="sign_username" required>
+                </div>
+                <div class="form-group">
+                  <label >First Name:</label>
+                  <input class="form-control" id="sign_fname" placeholder="Enter first name ..." name="sign_fname">
+                </div>
+                <div class="form-group">
+                  <label >Last Name:</label>
+                  <input class="form-control" id="sign_lname" placeholder="Enter last name ..." name="sign_lname">
+                </div>
+                <div class="form-group">
+                  <label for="pwd">Mobile Number:</label>
+                  <input type="tel" class="form-control" id="sign_num" name="sign_num" placeholder="Enter mobile number ..." pattern="[0-1]{2}[0-9]{9}" required>   
+                </div>
+                <div class="form-group">
+                  <label >Address:</label>
+                  <input class="form-control" id="address" placeholder="Enter address ..." name="address" required>
+                </div>
+                <div class="form-group">
+                  <label for="email">Email:</label>
+                  <input type="email" class="form-control" id="sign_email" placeholder="Enter email ..." name="sign_email" required>
+                </div>
+                <div class="form-group">
+                  <label for="pwd">Password:</label>
+                  <input type="password" class="form-control" id="sign_pswd" placeholder="Enter password ..." name="sign_pswd" required>
+                </div>
+                <div class="form-group">
+                  <label >Repeat Password:</label>
+                  <input type="password" class="form-control" id="sign_rpswd" placeholder="Repeat password ..." name="sign_rpswd" required>
+                </div>
+                
+                <center><br><button type="submit" class="btn btn-primary btn-lg btn-custome">Submit</button></center>
+              </form>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+<!------------------------------------------------Modal Log In--------------------------------------------------------------->
+
+  <div class="modal fade" id="log_in_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="exampleModalLabel">Log In</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form id ="log_in_form" action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                  <label for="pwd">Username:</label>
+                  <input class="form-control" id="log_username" placeholder="Enter username ..." name="log_username" required>
+                </div>
+                <div class="form-group">
+                  <label for="pwd">Password:</label>
+                  <input type="password" class="form-control" id="log_pswd" placeholder="Enter password ..." name="log_pswd" required>
+                </div>
+                
+                
+                <center><br><button type="submit" class="btn btn-primary btn-lg btn-custome">Submit</button></center>
+              </form>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+ <!---------------------------------------------------------------------------------------------------------------------------> 
+
+{% endblock %}
+
+{% endblock %}

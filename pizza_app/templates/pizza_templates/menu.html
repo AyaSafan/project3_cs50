@@ -1,0 +1,258 @@
+{% extends "pizza_templates/base.html" %}
+{% load static %}
+
+{% block script %}
+<!--<script src="{% static 'pizza_static/menu.js' %}"></script>-->
+{% endblock %}
+
+
+
+{% block title %}Menu{% endblock %}
+
+{% block nav_right %}
+{% if user.is_authenticated %}
+{% if user.is_superuser %}
+<li class="nav-item"><a class="nav-link" href="{% url 'allorders' %}"><i class="fa fa-bars" aria-hidden="true"></i> ORDERS</a></li> 
+{%else%}
+
+<li class="nav-item"><a class="nav-link" href="{% url 'myorders' %}"><i class="fa fa-bars" aria-hidden="true"></i> ORDERS</a></li> 
+<li class="nav-item"><a class="nav-link" href="{% url 'cart' %}"><i class="fa">&#xf07a;</i> CART</a></li> 
+{% endif %}
+<li class="nav-item">
+    <div class="dropdown">
+        <button class="btn btn-custome btn-user dropdown-toggle" type="button" data-toggle="dropdown">
+            <i class="fa">&#xf007;</i> {{ user.username }} </button>
+        
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'logout' %}">LOG OUT</a>
+            {% if not user.is_superuser %}
+            <a class="dropdown-item" onclick="edit_modal();" >EDIT INFO</a>
+            {% endif %}
+        </div>
+      </div>
+</li>
+{% endif %}
+{% endblock %}
+
+
+{% block body %}
+        <div class="background_menu">
+            <div class="container card-container">
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col-lg-10">
+                    <div class="menu">
+                      <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            {% for type in types%} 
+                            {% if forloop.counter == 1 %} 
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#tab-{{type.id}}">{{type}}</a>
+                            </li>
+                            {% endif %} 
+                            {%endfor%}
+
+                            {% for type in types%} 
+                            {% if forloop.counter != 1 %}                          
+                            <li class="nav-item">
+                                 <a class="nav-link" data-toggle="tab" href="#tab-{{type.id}}">{{type}}</a>
+                            </li>
+                            {% endif %} 
+                            {%endfor%}
+                            <li class="nav-item">
+                              <a class="nav-link" data-toggle="tab" href="#tab-toppings">Toppings</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" data-toggle="tab" href="#tab-extras">Extras</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+
+                        {% for type in types%}
+                            {% if forloop.counter == 1 %}  
+                            <div id='tab-{{type.id}}' class="tab-pane fade in active show">
+                            {%endif%} 
+                            {% if forloop.counter != 1 %}  
+                            <div id='tab-{{type.id}}' class="tab-pane fade">
+                            {%endif%}
+                            <div class="row row-price-title">
+                                <div class="col"></div>
+                                <div class="col-xsm-1 meal-price-title">Small</div> 
+                                <div class="col-xsm-1 meal-price-title"> &nbsp; Large</div>
+                                <div class="col-sm-2"></div>                                         
+                            </div>                              
+                                {% for meal in meals%}
+                                    {% if meal.type == type%}
+                                <div class="meal">
+                                    <div class="row">
+                                        <div class="col meal-name nopadding">{{meal.name}}</div>
+                                        {% if meal.small_price != 0%}
+                                        <div class="col-xsm-1 meal-price">${{meal.small_price}}</div>
+                                        {% else %}
+                                        <div class="col-xsm-1 meal-price">____  &nbsp; </div>
+                                        {% endif%} 
+                                        {% if meal.large_price != 0%}
+                                        <div class="col-xsm-1 meal-price"> &nbsp; ${{meal.large_price}}</div> 
+                                        {% else %}
+                                        <div class="col-xsm-1 meal-price">____  &nbsp;</div>
+                                        {% endif%}
+                                        <div class="col-sm-2 order">
+                                          {% if user.is_authenticated %}
+                                          {% if not user.is_superuser %}
+
+                                          <button type="button" class="btn btn-primary btn-md btn-order" 
+                                          onclick="open_modal('{{meal}}', '{{meal.id}}', '{{type.extras}}','{{meal.toppings}}' , '{{meal.small_price}}' , '{{meal.large_price}}');">
+                                          Order</button>
+                                          {% endif%}
+                                          {% endif%}
+                                        </div>                                        
+                                    </div>
+                                </div>
+                                    {%endif%}
+                                {%endfor%}
+                            </div>
+                        {%endfor%}
+                        <div id='tab-toppings' class="tab-pane fade">                         
+                                                
+                          {% for topping in alltoppings %}
+                              <div class="meal">
+                                  <div class="row"> 
+                                    <div class="col meal-name nopadding">{{topping}}</div>                                                                           
+                                  </div>
+                              </div>
+                            {% endfor %}
+                        </div>
+
+                        <div id='tab-extras' class="tab-pane fade">                         
+                                                
+                          {% for extra in extras %}
+                              <div class="meal">
+                                  <div class="row"> 
+                                    <div class="col meal-name nopadding">{{extra}}</div> 
+                                    <div class="col-xsm-1 meal-price"> ${{extra.price}}</div>                                                                          
+                                  </div>
+                              </div>
+                              {% endfor %}
+                        </div>
+
+
+                    </div>
+                    <div class="col"></div>
+             </div>
+            </div>
+        </div>
+
+<!-- ---------------------------------------------------------The Modal for adding items --------------------------------------->
+<div class="modal fade" id="order_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="order_modal_header">{{meal}}</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form id ="order_form" action="{% url 'order_item' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label>Size:</label>
+              <select class="form-control" name="size" id ="size">
+
+              </select>
+              
+            </div>
+                        
+            <div id="contents"></div>
+            
+            <center><button type="submit" class="btn btn-primary btn-lg btn-custome">ADD TO CART</button></center>
+
+          </form>
+    </div>
+    
+  </div>
+</div>
+</div>
+<!---------------------------------------------------------------------------------------------------------------------------------->
+   
+<script>
+function open_modal(item_name, item_id, extras, item_toppings, smp, lgp) {
+  header= document.querySelector("#order_modal_header");
+  header.innerHTML=item_name;
+  modal = document.querySelector("#contents");
+  size = document.querySelector("#size");
+
+           
+      modal.innerHTML = `
+                <input type="hidden" name="id" id="id" value="${item_id}">
+                <input type="hidden" name="toppings_num" id="toppings_num" value="${parseInt(item_toppings)}">
+                `;
+                
+if( parseInt(smp)>0 && parseInt(lgp)==0 ){
+      size.innerHTML= `<option>Small</option>`;}
+
+if( parseInt(smp)==0 && parseInt(lgp)>0  ){
+      size.innerHTML = `<option>Large</option>`;}
+
+if( parseInt(smp)>0 && parseInt(lgp)>0 ){
+      size.innerHTML= `<option>Small</option> <option>Large</option>`;}
+
+  if( parseInt(item_toppings)>0 ){
+      modal.innerHTML += `
+      <div class="dropdown">
+    <button class="btn btn-order btn-extras dropdown-toggle"  type="button" data-toggle="dropdown">Choose Your Toppings
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu extras" role="menu">
+                      {% for topping in alltoppings %}
+                      
+                      <li><div class="form-check">
+                          <label class="form-check-label">                            
+                            <input type="checkbox" class="form-check-input topping" name="topping{{topping.id}}" value={{topping.id}}>{{topping}}
+                          </label>
+                        </div> </li> 
+                      
+
+                      {% endfor %}
+    </ul>
+    </div> <br><br><br>
+                `;
+  }
+  
+  if( extras == 'True' ){
+    modal.innerHTML += `
+    <div class="dropdown">
+    <button class="btn btn-order btn-extras dropdown-toggle" type="button" data-toggle="dropdown">  Offered Extras
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu extras" role="menu">
+                      {% for extra in extras %}
+                      <li><div class="form-check">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" name="extra{{extra.id}}" value={{extra.id}}>{{extra}}  +$ {{extra.price}}
+                          </label>
+                        </div> </li>                     
+                        {% endfor %}
+    </ul>
+    </div> <br><br><br>`;
+  }
+
+
+$("#order_modal").modal('show');
+/*----------------------------------------------------------------*/
+var max = parseInt(item_toppings);
+    document.querySelectorAll("input.form-check-input.topping").forEach(check => {      
+     check.onclick = () => {
+     var checkedChecks = document.querySelectorAll(".form-check-input.topping:checked");
+       if (checkedChecks.length >= max+1)
+      return false;
+     };   
+    }); 
+/*----------------------------------------------------------------*/
+
+    $("select").change(function() {   
+    $("select").not(this).find("option[value="+ $(this).val() + "]").attr('disabled', true);
+  }); 
+}
+   
+</script>
+          
+{% endblock %}

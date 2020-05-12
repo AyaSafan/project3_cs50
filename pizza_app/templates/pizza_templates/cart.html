@@ -1,0 +1,107 @@
+{% extends "pizza_templates/base.html" %}
+{% load static %}
+
+{% block script %}
+<script src="{% static 'pizza_static/index.js' %}"></script>
+
+{% endblock %}
+
+
+
+{% block title %}Menu{% endblock %}
+
+
+
+{% block nav_right %}
+<li class="nav-item"><a class="nav-link" href="{% url 'myorders' %}"><i class="fa fa-bars" aria-hidden="true"></i> ORDERS</a></li> 
+<li class="nav-item"><a class="nav-link" href="{% url 'cart' %}"><i class="fa">&#xf07a;</i> CART</a></li>
+<li class="nav-item">
+  <div class="dropdown">
+      <button class="btn btn-custome btn-user dropdown-toggle" type="button" data-toggle="dropdown">
+          <i class="fa">&#xf007;</i> {{ user.username }} </button>
+      
+      <div class="dropdown-menu">
+          <a class="dropdown-item" href="{% url 'logout' %}">LOG OUT</a>
+          <a class="dropdown-item"  onclick="edit_modal();" >EDIT INFO</a>
+      </div>
+    </div>
+</li>    
+ {% endblock %}
+
+
+{% block body %}
+
+{% if messages %}
+      <div id="alert">
+          {% for message in messages %}
+          {{ message }}
+          {% endfor %}
+      </div>
+{% endif %}
+
+<div class="background_menu">
+  <div class="container card-container">
+    <div class="row">
+      <div class="col-12">
+        <div class="container recet">
+          {% block recet %}
+          <div class="table-responsive-md">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">MRAL</th>
+                <th scope="col">TOPPINGS</th>
+                <th scope="col">EXTRAS</th>
+                <th scope="col">SIZE</th>
+                <th scope="col">PRICE</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {%for order in orders%}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{order.meal}}</td>
+                <td>
+                      <ul>
+                      {%for topping in order.toppings.all%}
+                      <li>{{topping}}</li>             
+                      {% endfor%}
+                      </ul>
+                </td>
+                <td>
+                      <ul>
+                      {%for extra in order.extras.all%}
+                      <li>{{extra}}</li>               
+                      {% endfor%}
+                    </ul>
+              </td>
+              <td>{{order.size}}</td>
+              <td>${{order.price}}</td>
+              <td> <a href="{% url 'delete' order.id %}"><i class="fas fa-trash-alt"></i></a></td>
+              </tr>
+              {% endfor%}
+            
+            </tbody>
+          </table></div>
+         
+        </div>
+        <center> 
+        <div class="total">
+          <h2 class="logo1"> Total Price</h3>
+          <h4 class="logo2"> ${{total}}</h6>          
+        </div>   
+      
+      {% if total > 0 %}  
+      <a href="{% url 'place_order' %}"><button type="button" class="btn btn-primary btn-lg btn-custome">CONFIRM ORDER</button></a>  
+      {% endif %}  
+      </center>
+      
+      </div>
+
+      {% endblock %}             
+    </div>
+  </div>
+</div>
+{% endblock %}
