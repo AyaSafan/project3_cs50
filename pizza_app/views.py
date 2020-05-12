@@ -202,7 +202,7 @@ def place_order(request):
         order.delete()
     
     
-    body='\n Welcome to Pinnochio\' Pizza & Subs! \n \n Order Number: {} \n You ordered:\n {} \n Thanks for using our online service! \n  Made with Love from Pinnochio\'s pizza & subs!♡ '.format(order.id, order_items)
+    body='\n Welcome to Pinnochio\' Pizza & Subs! \n \n Order Number: {} \n You ordered:\n {}  Total Price: $ {} \n \n Thanks for using our online service! \n  Made with Love from Pinnochio\'s pizza & subs!♡ '.format(order.id, price, order_items)
     send_mail(
     'Pinnochio Pizza & Subs Order',
     body,
