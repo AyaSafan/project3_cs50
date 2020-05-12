@@ -39,6 +39,10 @@ def signup(request):
     address =       request.POST["address"]
     email=          request.POST["sign_email"]
     password=       request.POST["sign_pswd"]
+    repassword=     request.POST["sign_rpswd"]
+    if (password != repassword):
+        messages.info(request, 'The Password and Repeat Paassword didn\'t match. Sign Up failed.')
+        return HttpResponseRedirect(reverse("index")) 
     try:
         user = User.objects.create_user(email = email, username= username, password =password)
         user.first_name = first_name
